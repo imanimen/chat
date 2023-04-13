@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import Logo from '../assets/cs.svg'
 import { ToastContainer, toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css"
+import "axios"
+import axios from 'axios';
+import { registerRoute } from '../utils/ApiRoutes';
 
 function Register(){
     const [ values, setValues ] = useState({
@@ -13,23 +16,46 @@ function Register(){
         confirmPassword: ""
     })
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        handleValidation()
+         if ( handleValidation() ) {
+            const { email, username, password, confirmPassword } = values;
+                const { data } = await axios.post(registerRoute, {
+                    username,
+                    email,
+                    password
+                });
+        }
+    }
+
+    const toastOptions =  {
+        position: "top-left",
+        autoClose: 5000,
+        pauseOnHover: true,
+        draggable: true,
+        theme: 'dark'
     }
 
     const handleValidation = () => {
         const { username, email, password, confirmPassword } = values;
         if ( password !== confirmPassword ){
-            toast.error("Password and Confirm Password Should Be Same!", {
-                position: "top-left",
-                autoClose: 3000,
-                pauseOnHover: true,
-                draggable: true,
-                theme: 'dark'
-            })
+            toast.error(
+            "Password and Confirm Password Should Be Same!",
+            toastOptions
+            );
+            return false;
+        } else if ( username.length < 3 ) {
+            toast.error("Username field should be greater than 3 characters", toastOptions)
+            return false;
+        } else if ( password.length < 5 ) {
+            toast.error("Password field should be equal or greater than 5 characters", toastOptions)
+            return false;
+        } else if (email==="") {
+            toast.error("Email field is required", toastOptions);
+            return false;
         }
-    }
+        return true;
+    };
 
     const handleChange = (event) => {
         setValues({...values, [event.target.name]: event.target.value})
