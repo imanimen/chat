@@ -1,5 +1,7 @@
 const User = require("../model/userModel");
-const bcrypt = require("bcryptjs")
+
+
+const bcrypt = require('bcryptjs');
 
 module.exports.register = async (req, res, next) => {
     try {
@@ -12,12 +14,13 @@ module.exports.register = async (req, res, next) => {
         if (emailCheck)
             return res.json({status:false, msg: "Email already used", code: 422})
         const hashedPassword = await bcrypt.hash(password,10);
+        // console.log(hashedPassword)
         const user = await User.create({
             email,
             username, 
-            hashedPassword
+            password
         });
-        delete user.password;
+        // delete user.password;
         return res.json({status:true, msg: "Registered Successfully",data: user, code: 200})
     } catch (error) {
         next(error)

@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     max: 50,
   },
-//   password: { type: String, required: true },
+  password: { type: String, required: true },
   isAvatarImageSet: {
     type: Boolean,
     default: false,
